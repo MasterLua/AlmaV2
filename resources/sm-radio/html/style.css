@@ -1,0 +1,191 @@
+/* General Style */
+
+* {
+    font-family: sans-serif;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+
+.radio_on, .radio_off {
+    position: absolute;
+    bottom: 0;
+    right: 8px;
+
+    opacity: 0;
+    transition: .5s;
+}
+
+.channel_on, .channel_off {
+    position: absolute;
+    top: 653px;
+    right: 179px;
+}
+
+/* Radio On */
+
+.radio_on {
+    display: none;
+    z-index: 1;
+}
+
+.channel_on {
+    text-align: center;
+
+    background: transparent;
+    width: 100px;
+    border: 0;
+
+    color: white;
+    font-size: 24px;
+}
+
+/* Radio Off */
+
+.radio_off {
+    z-index: 2;
+}
+
+.channel_off {
+    text-align: center;
+
+    background: transparent;
+    width: 100px;
+    border: 0;
+
+    color: white;
+    font-size: 24px;
+}
+
+/* Toggle Status Button */
+
+.toggleStatus, .toggleStatusInput {
+    position: absolute;
+    z-index: 3;
+
+    width: 60px;
+    height: 198px;
+
+    background: transparent;
+    border: 0;
+}
+
+.toggleStatus {
+    bottom: 540px;
+    right: 135px;
+}
+
+/* Volume Buttons */
+
+.volumeUp, .volumeDown, .volumeUpInput, .volumeDownInput {
+    position: absolute;
+    z-index: 3;
+
+    width: 50px;
+    height: 50px;
+
+    background: transparent;
+    border: 0;
+}
+
+.volumeUp {
+    bottom: 294px;
+    right: 210px;
+}
+
+.volumeDown {
+    bottom: 244px;
+    right: 210px;
+}
+
+/* Tooltips */
+
+.tooltip_left, .tooltip_top {
+    position: absolute;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .6s;
+    pointer-events: none;
+}
+
+.tooltip_left::after, .tooltip_top::after {
+    content: "";
+    position: absolute;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+}
+
+.tooltip_left::after {
+    top: 50%;
+    left: 100%;
+    border-color: transparent transparent transparent #222;
+}
+
+.tooltip_top::after {
+    top: 118%;
+    left: 44%;
+    border-color: #222 transparent transparent transparent;
+}
+
+.volumeUp:hover .tooltip_left, .volumeDown:hover .tooltip_left, .toggleStatus:hover .tooltip_top {
+    opacity: 0.7;
+}
+
+.tooltip_left {
+    right: 15px;
+    top: 2px;
+    width: 120px;
+}
+
+.tooltip_top {
+    right: -7px;
+    top: -40px;
+    width: 75px;
+}
+
+/* Volume Visuals */
+
+#volumeVisual {
+    position: absolute;
+    right: 185px;
+    bottom: 375px;
+    z-index: 2;
+    opacity: 0;
+    transition: .5s;
+}
+
+.vlist {
+    display: inline;
+    float: left;
+}
+
+.vlistdiv, .vlistdivon, .vlistdivmute {
+    background: #222;
+    padding: 2px 4px;
+    margin-right: 2px;
+    border-radius: 1px;
+    box-shadow: 0 0 2px #111 inset;
+}
+
+.vlistdivon {
+    background: #557dff;
+    box-shadow: 0 0 3px #557dff;
+}
+
+.vlistdivmute {
+    background: #ff5555;
+    box-shadow: 0 0 3px #ff5555;
+}

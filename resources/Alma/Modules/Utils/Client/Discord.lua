@@ -1,0 +1,13 @@
+Citizen.CreateThread(function()
+    AddTextEntry('FE_THDR_GTAO', ('AlmaRP [%d] [%s]'):format(GetPlayerServerId(PlayerId()), GetPlayerName(PlayerId())))
+    
+    ReplaceHudColourWithRgba(116, 255, 196, 45, 255)
+    SetDiscordAppId("898956076492423188")
+    SetDiscordRichPresenceAsset('logo')
+    SetDiscordRichPresenceAssetText('Connecté sur AlmaRP, rejoint l\'aventure sur notre discord.gg/X5HmUv3xfW')
+    SetDiscordRichPresenceAssetSmall('logo')
+    SetDiscordRichPresenceAssetSmallText('')
+    SetRichPresence(("%s [%s]"):format(GetPlayerName(PlayerId()), GetPlayerServerId(PlayerId())))
+    SetDiscordRichPresenceAction(0, "Discord", "https://discord.gg/X5HmUv3xfW")
+    SetDiscordRichPresenceAction(1, "Se Connecter", "fivem://connect/cfx.re/join/m76qa7")
+end)

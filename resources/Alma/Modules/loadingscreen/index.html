@@ -1,0 +1,333 @@
+<html>
+
+<head>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<link href="https://vjs.zencdn.net/7.6.0/video-js.css" rel="stylesheet" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<div id="background">
+		<div class="loading-container">
+			<div class="tips-container">
+				<span class="tips-title">Le saviez-vous ?</span>
+				<span class="tips-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+			</div>
+			<div class="loading-labels">
+				<div id="INIT_BEFORE_MAP_LOADED-label" class="color-first">Pre-loadings</div>
+				<div id="MAP-label" class="color-second">Map</div>
+				<div id="INIT_AFTER_MAP_LOADED-label" class="color-third">Initialization</div>
+				<div id="INIT_SESSION-label" class="color-fourth">Session</div>
+			</div>
+			<div class="loading-bar-container">
+				<div id="INIT_BEFORE_MAP_LOADED-bar" class="loading-bar bgcolor-first"></div>
+				<div id="MAP-bar" class="loading-bar bgcolor-second"></div>
+				<div id="INIT_AFTER_MAP_LOADED-bar" class="loading-bar bgcolor-third"></div>
+				<div id="INIT_SESSION-bar" class="loading-bar bgcolor-fourth"></div>
+			</div>
+		</div>
+	</div>
+	<audio id="leson" src="music/load.ogg" autoplay="true" hidden="true" loop="true"/>
+	<audio id="Loading" autoplay loop >
+		<source src="music/load.ogg" type="audio/ogg">
+   </audio>
+   <script>
+	var vid = document.getElementById("Loading");
+	vid.volume = 0.2
+   </script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+		if (!String.format) {
+			String.format = function (format) {
+				var args = Array.prototype.slice.call(arguments, 1);
+				return format.replace(/{(\d+)}/g, function (match, number) {
+					return typeof args[number] != "undefined" ? args[number] : match;
+				});
+			};
+		}
+
+		function add(a, b) {
+			return a + b;
+		}
+
+		const gameTips = [
+			"Les noix de coco tuent plus de gens que les requins.",
+			"Ce sont les hippocampes mâles qui portent les bébés dans leur ventre.",
+			"Il faudrait à un homme plus de 30 ans pour pouvoir compter jusqu'à 1 milliard.",
+		]
+
+		const backgroundsList = [
+			"bg/1.png"
+		];
+
+		const loadingStages = [
+			"Pre-loading",
+			"Map",
+			"Initialization",
+			"Session",
+		];
+
+		const technicalNames = [
+			"INIT_BEFORE_MAP_LOADED",
+			"MAP",
+			"INIT_AFTER_MAP_LOADED",
+			"INIT_SESSION",
+		];
+
+		var currentLoadingStage = 0;
+		var loadingWeights = [1.5 / 10, 4 / 10, 1.5 / 10, 3 / 10];
+		// These are hardcoded but can be changed easily
+		// If # changes it's not the biggest deal; most important is which of the bars you are on (and that is unaffected by these numbers)
+		// Make #debug window visible and you can quickly see #s of each
+		// Just make sure you do it after restarting your FiveM client as client caches a lot in memory after first join
+		var loadingTotals = [70, 70, 70, 300];
+		var registeredTotals = [0, 0, 0, 0];
+		var stageVisible = [false, false, false, false];
+
+		var currentProgress = [0.0, 0.0, 0.0, 0.0];
+		var currentProgressSum = 0.0;
+		var currentLoadingCount = 0;
+
+		function doProgress(stage) {
+			var idx = technicalNames.indexOf(stage);
+			if (idx >= 0) {
+				registeredTotals[idx]++;
+				if (idx > currentLoadingStage) {
+					while (currentLoadingStage < idx) {
+						currentProgress[currentLoadingStage] = 1.0;
+						currentLoadingStage++;
+					}
+					currentLoadingCount = 1;
+				} else currentLoadingCount++;
+				currentProgress[currentLoadingStage] = Math.min(
+					currentLoadingCount / loadingTotals[idx],
+					1.0
+				);
+				updateProgress();
+			}
+		}
+
+		const totalWidth = 99.1;
+		var progressMaxLengths = [];
+
+		var i = 0;
+		while (i < currentProgress.length) {
+			progressMaxLengths[i] = loadingWeights[i] * totalWidth;
+			i++;
+		}
+
+		function updateProgress() {
+			var i = 0;
+			while (i <= currentLoadingStage) {
+				if ((currentProgress[i] > 0 || !currentProgress[i - 1]) && !stageVisible[i]) {
+					document.querySelector("#" + technicalNames[i] + "-label").style.display = 'inline-block';
+
+					document.querySelector("#" + technicalNames[i] + "-bar").style.display = 'inline-block';
+					stageVisible[i] = true;
+				}
+				document.querySelector("#" + technicalNames[i] + "-bar").style.width = currentProgress[i] * progressMaxLengths[i] + '%';
+				document.querySelector("#" + technicalNames[i] + "-label").style.width = progressMaxLengths[i] + '%';
+				i++;
+			}
+		}
+		updateProgress();
+
+		const random = (a, b) => Math.floor(Math.random() * b) + a  
+
+		let currentTip = random(0, gameTips.length);
+
+		const changeTipText = newText => {
+			$(".tips-description").animate({ opacity: 0 })
+				.queue(() => $(".tips-description").text(newText).dequeue())
+				.animate({ opacity: 1 });  
+		}
+
+		function InitLoadingScreen() {
+			$(".tips-description").text(gameTips[currentTip]);
+			window.setInterval(function () {
+				currentTip = random(0, gameTips.length);
+				changeTipText(gameTips[currentTip]);
+			}, 10000);
+		}
+
+		InitLoadingScreen();
+
+		var count = 0;
+		const gstate = {
+			elems: [],
+			log: [],
+		};
+
+		function printLog(type, str) {
+			gstate.log.push({ type: type, str: str });
+		}
+
+		Array.prototype.last = function () {
+			return this[this.length - 1];
+		};
+
+		function getRandomInt(max) {
+			return Math.floor(Math.random() * Math.floor(max));
+		}
+
+		const handlers = {
+			startInitFunction(data) {
+				gstate.elems.push({
+					name: data.type,
+					orders: [],
+				});
+
+				printLog(1, String.format("Running {0} init functions", data.type));
+				if (data.type) doProgress(data.type);
+			},
+			startInitFunctionOrder(data) {
+				count = data.count;
+				printLog(
+					1,
+					String.format(
+						"[{0}] Running functions of order {1} ({2} total)",
+						data.type,
+						data.order,
+						data.count
+					)
+				);
+				if (data.type) doProgress(data.type);
+			},
+
+			initFunctionInvoking(data) {
+				printLog(
+					3,
+					String.format(
+						"Invoking {0} {1} init ({2} of {3})",
+						data.name,
+						data.type,
+						data.idx,
+						count
+					)
+				);
+				if (data.type) doProgress(data.type);
+			},
+
+			initFunctionInvoked(data) {
+				if (data.type) doProgress(data.type);
+			},
+
+			endInitFunction(data) {
+				printLog(
+					1,
+					String.format("Done running {0} init functions", data.type)
+				);
+				if (data.type) doProgress(data.type);
+			},
+
+			startDataFileEntries(data) {
+				count = data.count;
+
+				printLog(1, "Loading map");
+				if (data.type) doProgress(data.type);
+			},
+
+			onDataFileEntry(data) {
+				printLog(3, String.format("Loading {0}", data.name));
+				doProgress(data.type);
+				if (data.type) doProgress(data.type);
+			},
+
+			endDataFileEntries() {
+				printLog(1, "Done loading map");
+			},
+
+			performMapLoadFunction(data) {
+				doProgress("MAP");
+			},
+
+			onLogLine(data) {
+				printLog(3, data.message);
+			},
+		};
+
+		window.addEventListener("message", function (e) {
+			const data = e.data;
+			if (handlers[data.eventName]) handlers[data.eventName](data);
+		});
+
+		if (!window.invokeNative) {
+			var newType = function newType(name) {
+				return function () {
+					return handlers.startInitFunction({ type: name });
+				};
+			};
+			var newOrder = function newOrder(name, idx, count) {
+				return function () {
+					return handlers.startInitFunctionOrder({
+						type: name,
+						order: idx,
+						count: count,
+					});
+				};
+			};
+			var newInvoke = function newInvoke(name, func, i) {
+				return function () {
+					handlers.initFunctionInvoking({ type: name, name: func, idx: i });
+					handlers.initFunctionInvoked({ type: name });
+				};
+			};
+			var startEntries = function startEntries(count) {
+				return function () {
+					return handlers.startDataFileEntries({ count: count });
+				};
+			};
+			var addEntry = function addEntry() {
+				return function () {
+					return handlers.onDataFileEntry({ name: "meow", isNew: true });
+				};
+			};
+			var stopEntries = function stopEntries() {
+				return function () {
+					return handlers.endDataFileEntries({});
+				};
+			};
+
+			var newTypeWithOrder = function newTypeWithOrder(name, count) {
+				return function () {
+					newType(name)();
+					newOrder(name, 1, count)();
+				};
+			};
+
+			const demoFuncs = [
+				newTypeWithOrder("MAP", 5),
+				newInvoke("MAP", "meow1", 1),
+				newInvoke("MAP", "meow2", 2),
+				newInvoke("MAP", "meow3", 3),
+				newInvoke("MAP", "meow4", 4),
+				newInvoke("MAP", "meow5", 5),
+				newOrder("MAP", 2, 2),
+				newInvoke("MAP", "meow1", 1),
+				newInvoke("MAP", "meow2", 2),
+				startEntries(6),
+				addEntry(),
+				addEntry(),
+				addEntry(),
+				addEntry(),
+				addEntry(),
+				addEntry(),
+				stopEntries(),
+				newTypeWithOrder("INIT_SESSION", 4),
+				newInvoke("INIT_SESSION", "meow1", 1),
+				newInvoke("INIT_SESSION", "meow2", 2),
+				newInvoke("INIT_SESSION", "meow3", 3),
+				newInvoke("INIT_SESSION", "meow4", 4),
+			];
+
+			setInterval(function () {
+				demoFuncs.length && demoFuncs.shift()();
+			}, 350);
+		}
+	</script>
+</body>
+
+</html>
