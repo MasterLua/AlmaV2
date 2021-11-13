@@ -3,7 +3,7 @@ Citizen.CreateThread(function()
 	SetMapName('San Andreas')
 	SetGameType('ESX Legacy')
 	
-	local query = '`accounts`, `job`, `job_grade`, `group`, `position`, `inventory`, `skin`, `loadout`' -- Select these fields from the database
+	local query = '`accounts`, `job`, `job_grade`, `job2`, `job2_grade`, `group`, `position`, `inventory`, `skin`, `loadout`' -- Select these fields from the database
 	if Config.Multichar or Config.Identity then	-- append these fields to the select query
 		query = query..', `firstname`, `lastname`, `dateofbirth`, `sex`, `height`'
 	end
@@ -119,6 +119,7 @@ function loadESXPlayer(identifier, playerId, isNew)
 		accounts = {},
 		inventory = {},
 		job = {},
+		job2 = {},
 		loadout = {},
 		playerName = GetPlayerName(playerId),
 		weight = 0
@@ -128,6 +129,7 @@ function loadESXPlayer(identifier, playerId, isNew)
 		MySQL.Async.fetchAll(LoadPlayer, { identifier
 		}, function(result)
 			local job, grade, jobObject, gradeObject = result[1].job, tostring(result[1].job_grade)
+			local job2, grade2, jobObject2, gradeObject2 = result[1].job2, tostring(result[1].job2_grade)
 			local foundAccounts, foundItems = {}, {}
 
 			-- Accounts
@@ -155,6 +157,13 @@ function loadESXPlayer(identifier, playerId, isNew)
 				jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
 			end
 
+			if ESX.DoesJobExist(job2, grade2) then
+				jobObject2, gradeObject2 = ESX.Jobs[job2], ESX.Jobs[job2].grades[grade2]
+			else
+				job2, grade2 = 'unemployed2', '0'
+				jobObject2, gradeObject2 = ESX.Jobs[job2], ESX.Jobs[job2].grades[grade2]
+			end
+
 			userData.job.id = jobObject.id
 			userData.job.name = jobObject.name
 			userData.job.label = jobObject.label
@@ -166,6 +175,18 @@ function loadESXPlayer(identifier, playerId, isNew)
 
 			userData.job.skin_male = {}
 			userData.job.skin_female = {}
+
+			userData.job2.id = jobObject2.id
+			userData.job2.name = jobObject2.name
+			userData.job2.label = jobObject2.label
+
+			userData.job2.grade = tonumber(grade2)
+			userData.job2.grade_name = gradeObject2.name
+			userData.job2.grade_label = gradeObject2.label
+			userData.job2.grade_salary = gradeObject2.salary
+
+			userData.job2.skin_male = {}
+			userData.job2.skin_female = {}
 
 			if gradeObject.skin_male then userData.job.skin_male = json.decode(gradeObject.skin_male) end
 			if gradeObject.skin_female then userData.job.skin_female = json.decode(gradeObject.skin_female) end
@@ -267,7 +288,7 @@ function loadESXPlayer(identifier, playerId, isNew)
 	end)
 
 	Async.parallel(tasks, function(results)
-		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.coords)
+		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.job2, userData.loadout, userData.playerName, userData.coords)
 		ESX.Players[playerId] = xPlayer
 
 		if userData.firstname then 
@@ -286,6 +307,7 @@ function loadESXPlayer(identifier, playerId, isNew)
 			identifier = xPlayer.getIdentifier(),
 			inventory = xPlayer.getInventory(),
 			job = xPlayer.getJob(),
+			job2 = xPlayer.getJob2(),
 			loadout = xPlayer.getLoadout(),
 			maxWeight = xPlayer.getMaxWeight(),
 			money = xPlayer.getMoney(),
@@ -546,6 +568,7 @@ ESX.RegisterServerCallback('esx:getPlayerData', function(source, cb)
 		accounts     = xPlayer.getAccounts(),
 		inventory    = xPlayer.getInventory(),
 		job          = xPlayer.getJob(),
+		job2          = xPlayer.getJob2(),
 		loadout      = xPlayer.getLoadout(),
 		money        = xPlayer.getMoney()
 	})
@@ -559,6 +582,7 @@ ESX.RegisterServerCallback('esx:getOtherPlayerData', function(source, cb, target
 		accounts     = xPlayer.getAccounts(),
 		inventory    = xPlayer.getInventory(),
 		job          = xPlayer.getJob(),
+		job2          = xPlayer.getJob2(),
 		loadout      = xPlayer.getLoadout(),
 		money        = xPlayer.getMoney()
 	})

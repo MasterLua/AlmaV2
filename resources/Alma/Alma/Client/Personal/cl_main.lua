@@ -108,13 +108,20 @@ function MainPersonal()
     local pedsValueMenu = RageUI.CreateSubMenu(pedsMenu, "Peds", "Quel peds voulez-vous prendre?")
     local vetMenu = RageUI.CreateSubMenu(personalMenu, "Vêtement(s)", "Que voulez-vous faire ?")
     local vhMenu = RageUI.CreateSubMenu(personalMenu, "Véhicule", "Que voulez-vous faire ?")
-    local DoorIndex = 1;
+    local portefeuilleMenu = RageUI.CreateSubMenu(personalMenu, "Portefeuille", "Que voulez-vous faire ?")
+    local entrepriseMenu = RageUI.CreateSubMenu(portefeuilleMenu, "Entreprise", "Que voulez-vous faire ?")
+    local ENTREPRISE_MOUNT, ORGANISATION_MOUNT = 0, 0
+    local DoorIndex, IndexSelected = 1, 1
     local lol = true;
     local PedsValue = nil;
     local vip = 0;
+    local ACC = {}
+    for k,v in pairs(ESX.GetPlayerData().accounts) do
+        ACC[v.name] = v.money
+    end
     ESX.TriggerServerCallback("AlmaVIP:getVip", function(response) 
         vip = response
-    end)
+    end) 
 
     RageUI.Visible(personalMenu, not RageUI.Visible(personalMenu))
 
@@ -127,6 +134,11 @@ function MainPersonal()
                     Inventory()
                 end
             })
+            RageUI.Button("Portefeuille", nil, {RightLabel = "→→→"}, true, {
+                onSelected = function()
+                    
+                end
+            }, portefeuilleMenu)
             RageUI.Button("Démarche", "~r~Ce boutton vas ouvrir un autre menu", { RightLabel = "→→→"  }, true, {
                 onSelected = function()
                     ExecuteCommand("demarche")
@@ -164,7 +176,7 @@ function MainPersonal()
                 RageUI.Button("Paramètre(s)", nil, {RightLabel = "→→→"}, true, {
 
                 }, paramMenu)
-            end)
+        end)
         RageUI.IsVisible(vhMenu, function()
             local veh = GetVehiclePedIsIn(PlayerPedId(), false)
             RageUI.Button("Allumer/Eteindre le moteur", nil, {}, true, {
@@ -247,6 +259,134 @@ function MainPersonal()
                 RageUI.Button(getText(("c1_%s"):format(c1[i])), nil, { RightBadge = RageUI.BadgeStyle.Clothes }, true, {
                     onSelected = function()
                         setUniform(c1[i], PlayerPedId())
+                    end
+                })
+            end
+        end)
+        RageUI.IsVisible(portefeuilleMenu, function()
+            RageUI.List("Que voulez vous gérer?", {
+                { Name = "Organisation", Value = "orga" },
+                { Name = "Entreprise", Value = "entreprise" }
+            }, IndexSelected, nil, {}, true, {
+                onListChange = function(Index)
+                    IndexSelected = Index;
+                end,
+                onSelected = function()
+                end
+            })
+            Helper:Switch(IndexSelected, {
+                [1] = function()
+                    if (ESX.GetPlayerData().job2.grade_name == "boss") then
+                        RageUI.Button("Votre Organisation : ~y~"..ESX.GetPlayerData().job2.label, "", {RightLabel = "→→→"}, true, {
+                            onSelected = function()
+                                ESX.TriggerServerCallback("Inventory:getOrganisationMenu", function(response) 
+                                    ORGANISATION_TABLE = response;
+                                end)
+                                while ORGANISATION_TABLE == nil do
+                                    Citizen.Wait(1)
+                                end
+                            end
+                        }, orgaMenu)
+                    else
+                        RageUI.Button("Votre Organisation :~s~ ~y~"..ESX.GetPlayerData().job2.label, nil, {}, true, {
+                            onSelected = function()
+                                
+                            end
+                        }, orgaMenu)
+                    end
+                end,
+                [2] = function()
+                    if (ESX.GetPlayerData().job.grade_name == "boss") then
+                        RageUI.Button("Votre Entreprise : ~y~"..ESX.GetPlayerData().job.label, nil, {RightLabel = "→→→"}, true, {
+                            onSelected = function()
+                                ESX.TriggerServerCallback("Inventory:getEntrepriseMenu", function(response) 
+                                    ENTREPRISE_MOUNT = response;
+                                end)
+                            end
+                        }, entrepriseMenu)
+                    else
+                        RageUI.Button("Votre Entreprise :~s~ ~y~"..ESX.GetPlayerData().job.label, nil, {}, true, {
+                            onSelected = function()
+                                
+                            end
+                        }, entrepriseMenu)
+                    end
+                end
+            })
+            RageUI.Separator("")
+            RageUI.Button("Argent en banque", nil, {RightLabel = "~b~"..ACC["bank"]..".0 $"}, true, {
+                onSelected = function()
+                end
+            })
+            RageUI.Button("Argent en liquide", nil, {RightLabel = "~g~"..ACC["money"]..".0 $"}, true, {
+                onSelected = function()
+                end
+            })
+            RageUI.Button("Argent en non déclarer", nil, {RightLabel = "~c~"..ACC["black_money"]..".0 $"}, true, {
+                onSelected = function()
+                end
+            })
+        end)
+        RageUI.IsVisible(entrepriseMenu, function()
+            if ESX.GetPlayerData().job.grade_name ~= "boss" then
+                RageUI.Button("Démissionner", nil, {RightLabel = "→→→"}, true, {
+                    onSelected = function()
+                        Alma:TriggerServerEvent("Entreprise", "Leave")
+                    end
+                })
+            else
+                RageUI.Button("Argent dans l'entreprise", "Il y'a ~g~"..ENTREPRISE_MOUNT.." $~s~ sur le compte de l'entreprise", {RightLabel = "~g~"..ENTREPRISE_MOUNT.."$"}, true, {
+                    onSelected = function()
+                    end
+                })
+                RageUI.Separator("")
+                local player, distance = ESX.Game.GetClosestPlayer()
+                RageUI.Button("Recruter dans l'entreprise", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
+                    onActive = function()
+                        if player ~= -1 and distance <= 3.0 then
+                            DrawMarker(1, GetEntityCoords(GetPlayerPed(player)).x, GetEntityCoords(GetPlayerPed(player)).y, GetEntityCoords(GetPlayerPed(player)).z - 0.91, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75, 255, 0, 0, 255, true, false, 0.0, true)
+                        else
+                            Visual.Subtitle("Personne à cotés.", 1)
+                        end
+                    end,
+                    onSelected = function()
+                        Alma:TriggerServerEvent("Entreprise", "Recruit", GetPlayerServerId(player))
+                    end
+                })
+                RageUI.Button("Promouvoir", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
+                    onActive = function()
+                        if player ~= -1 and distance <= 3.0 then
+                            DrawMarker(1, GetEntityCoords(GetPlayerPed(player)).x, GetEntityCoords(GetPlayerPed(player)).y, GetEntityCoords(GetPlayerPed(player)).z - 0.91, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75, 255, 0, 0, 255, true, false, 0.0, true)
+                        else
+                            Visual.Subtitle("Personne à cotés.", 1)
+                        end
+                    end,
+                    onSelected = function()
+                        Alma:TriggerServerEvent("Entreprise", "Promote", GetPlayerServerId(player))
+                    end
+                })
+                RageUI.Button("Rétrograder", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
+                    onActive = function()
+                        if player ~= -1 and distance <= 3.0 then
+                            DrawMarker(1, GetEntityCoords(GetPlayerPed(player)).x, GetEntityCoords(GetPlayerPed(player)).y, GetEntityCoords(GetPlayerPed(player)).z - 0.91, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75, 255, 0, 0, 255, true, false, 0.0, true)
+                        else
+                            Visual.Subtitle("Personne à cotés.", 1)
+                        end
+                    end,
+                    onSelected = function()
+                        Alma:TriggerServerEvent("Entreprise", "UnPromote", GetPlayerServerId(player))
+                    end
+                })
+                RageUI.Button("Virer de l'entreprise", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
+                    onActive = function()
+                        if player ~= -1 and distance <= 3.0 then
+                            DrawMarker(1, GetEntityCoords(GetPlayerPed(player)).x, GetEntityCoords(GetPlayerPed(player)).y, GetEntityCoords(GetPlayerPed(player)).z - 0.91, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75, 255, 0, 0, 255, true, false, 0.0, true)
+                        else
+                            Visual.Subtitle("Personne à cotés.", 1)
+                        end
+                    end,
+                    onSelected = function()
+                        Alma:TriggerServerEvent("Entreprise", "Kick", GetPlayerServerId(player))
                     end
                 })
             end
@@ -430,10 +570,12 @@ function MainPersonal()
                 end
             })
         end)
-        if not RageUI.Visible(personalMenu) and not RageUI.Visible(paramMenu) and not RageUI.Visible(rockMenu) and not RageUI.Visible(persoMenu) and not RageUI.Visible(pedsMenu) and not RageUI.Visible(pedsValueMenu) and not RageUI.Visible(vhMenu) and not RageUI.Visible(vetMenu) then
+        if not RageUI.Visible(personalMenu) and not RageUI.Visible(paramMenu) and not RageUI.Visible(rockMenu) and not RageUI.Visible(persoMenu) and not RageUI.Visible(pedsMenu) and not RageUI.Visible(pedsValueMenu) and not RageUI.Visible(vhMenu) and not RageUI.Visible(vetMenu) and not RageUI.Visible(portefeuilleMenu) and not RageUI.Visible(entrepriseMenu) then
             paramMenu = RMenu:DeleteType("paramMenu", true)
+            portefeuilleMenu = RMenu:DeleteType("portefeuilleMenu", true)
             rockMenu = RMenu:DeleteType("rockMenu", true)
             persoMenu = RMenu:DeleteType("persoMenu", true)
+            entrepriseMenu = RMenu:DeleteType("entrepriseMenu", true)
             personalMenu = RMenu:DeleteType("personalMenu", true)
             pedsMenu = RMenu:DeleteType("pedsMenu", true)
             vhMenu = RMenu:DeleteType("vhMenu", true)

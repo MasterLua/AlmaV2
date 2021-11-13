@@ -1,5 +1,7 @@
 local revenir = false;
 
+Alma.InShooting = false;
+
 function SpawnVehicleLocally(modelName, coords, heading, cb)
     local model = GetHashKey(modelName)
     local ped       = GetPlayerPed(-1)
@@ -43,10 +45,9 @@ AddEventHandler("Spawn:VehicleBoutique", function(car)
     veh = SpawnVehicleLocally(car, vector3(-1815.3588867188, -724.98974609375, 8.6897211074829), 122.0)
     TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
     NetworkOverrideClockTime(16, 0, 0)
+    Alma.InShooting = true;
     while true do
         rot = rot - 0.15
-        print(rot)
-        print(veh)
         SetEntityRotation(veh, GetEntityPitch(veh), GetEntityRoll(veh), rot, 3, 1)
 		SetEntityHeading(veh, rot)
         SetFollowPedCamViewMode(1)
@@ -55,7 +56,15 @@ AddEventHandler("Spawn:VehicleBoutique", function(car)
         Visual.FloatingHelpText("Appuyer sur ~INPUT_CONTEXT~ pour stopper le shooting photo.", false)
         NetworkOverrideClockTime(16, 0, 0)
         SetEntityVisible(PlayerPedId(), false);
+        if (IsControlJustPressed(0, 51)) then
+            Alma.InShooting = false;
+            DeleteVehicle(veh)
+            SetEntityVisible(PlayerPedId(), true)
+            SetEntityCoords(PlayerPedId(), pos);
+            ESX.ShowNotification("Fin du shooting photo sur la "..car.." !")
+            break
+        end
     end
-end)
+end) 
 
 local HudTimer = 0

@@ -12,7 +12,7 @@ Citizen.CreateThread(function()
 
         if (HudTimer + 200 < cGameTimer) then
             HudTimer = cGameTimer
-            if (GetVehiclePedIsIn(PlayerPedId(), false) ~= 0) and (Alma:GetPedVehicleSeat(PlayerPedId()) == -1) then
+            if (GetVehiclePedIsIn(PlayerPedId(), false) ~= 0) and (Alma:GetPedVehicleSeat(PlayerPedId()) == -1) and not (Alma.InShooting) then
                 if not (HUD.Speedometer) then
                     SendNUIMessage({
                         speedometer = 1,

@@ -69,7 +69,7 @@ Alma.Ambulance.OpenAmbulanceMenu = function()
                         if string ~= "" then
                             Montant = tonumber(string)
                         end
-                        Alma.toServer("Core:AddBilling", GetPlayerServerId(closestPlayer), tonumber(Montant), 'ambulance')
+                        Alma.toServer("Billing:AddBilling", GetPlayerServerId(closestPlayer), tonumber(Montant), 'ambulance')
                     end
                 end
             })

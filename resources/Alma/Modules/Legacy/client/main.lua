@@ -284,6 +284,20 @@ AddEventHandler('esx:setJob', function(Job)
 	ESX.SetPlayerData('job', Job)
 end)
 
+RegisterNetEvent('esx:setJob2')
+AddEventHandler('esx:setJob2', function(Job2)
+	if Config.EnableHud then
+		local grade2Label = Job2.grade_label ~= Job2.label and Job2.grade_label or ''
+		if grade2Label ~= '' then grade2Label = ' - '..grade2Label end
+		ESX.UI.HUD.UpdateElement('job', {
+			job2_label = Job2.label,
+			grade2_label = grade2Label
+		})
+	end
+	ESX.SetPlayerData('job2', Job2)
+end)
+
+
 RegisterNetEvent('esx:spawnVehicle')
 AddEventHandler('esx:spawnVehicle', function(vehicle)
 	local model = (type(vehicle) == 'number' and vehicle or GetHashKey(vehicle))

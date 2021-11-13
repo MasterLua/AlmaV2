@@ -1,4 +1,4 @@
-function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, weight, job, loadout, name, coords)
+function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, weight, job, job2, loadout, name, coords)
 	local self = {}
 
 	self.accounts = accounts
@@ -7,6 +7,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	self.identifier = identifier
 	self.inventory = inventory
 	self.job = job
+	self.job2 = job2
 	self.loadout = loadout
 	self.name = name
 	self.playerId = playerId
@@ -124,6 +125,10 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 	self.getJob = function()
 		return self.job
+	end
+
+	self.getJob2 = function()
+		return self.job2
 	end
 
 	self.getLoadout = function(minimal)
@@ -321,6 +326,29 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 			TriggerEvent('esx:setJob', self.source, self.job, lastJob)
 			self.triggerEvent('esx:setJob', self.job)
+		else
+			print(('[Alma] [^3WARNING^7] Ignoring invalid .setJob() usage for "%s"'):format(self.identifier))
+		end
+	end
+
+	self.setJob2 = function(job, grade)
+		grade2 = tostring(grade)
+		local lastJob2 = json.decode(json.encode(self.job2))
+
+		if ESX.DoesJobExist(job, grade) then
+			local jobObject2, gradeObject2 = ESX.Jobs[job2], ESX.Jobs[job2].grades[grade2]
+
+			self.job2.id    = jobObject2.id
+			self.job2.name  = jobObject2.name
+			self.job2.label = jobObject2.label
+
+			self.job2.grade        = tonumber(grade)
+			self.job2.grade_name   = gradeObject2.name
+			self.job2.grade_label  = gradeObject2.label
+			self.job2.grade_salary = gradeObject2.salary
+
+			TriggerEvent('esx:setJob2', self.source, self.job2, lastJob2)
+			self.triggerEvent('esx:setJob2', self.job2)
 		else
 			print(('[Alma] [^3WARNING^7] Ignoring invalid .setJob() usage for "%s"'):format(self.identifier))
 		end
