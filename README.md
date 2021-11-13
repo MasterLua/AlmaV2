@@ -1,9 +1,9 @@
+[Contributors]
+[Forks]
+[Stargazers]
+[Issues]
+[MIT License]
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
 # 🐲 AlmaRP V2 - Project
 ## Only for contributor or Owner of them
 
