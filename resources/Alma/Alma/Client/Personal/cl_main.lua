@@ -350,7 +350,11 @@ function MainPersonal()
                         end
                     end,
                     onSelected = function()
-                        Alma:TriggerServerEvent("Entreprise", "Recruit", GetPlayerServerId(player))
+                        if player ~= -1 and distance <= 3.0 then
+                            Alma:TriggerServerEvent("Entreprise", "Recruit", GetPlayerServerId(player))
+                        else
+                            ESX.ShowNotification("Personne a cotés !")
+                        end
                     end
                 })
                 RageUI.Button("Promouvoir", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
@@ -362,7 +366,11 @@ function MainPersonal()
                         end
                     end,
                     onSelected = function()
-                        Alma:TriggerServerEvent("Entreprise", "Promote", GetPlayerServerId(player))
+                        if player ~= -1 and distance <= 3.0 then
+                            Alma:TriggerServerEvent("Entreprise", "Promote", GetPlayerServerId(player))
+                        else
+                            ESX.ShowNotification("Personne a cotés !")
+                        end
                     end
                 })
                 RageUI.Button("Rétrograder", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
@@ -374,7 +382,11 @@ function MainPersonal()
                         end
                     end,
                     onSelected = function()
-                        Alma:TriggerServerEvent("Entreprise", "UnPromote", GetPlayerServerId(player))
+                        if player ~= -1 and distance <= 3.0 then
+                            Alma:TriggerServerEvent("Entreprise", "UnPromote", GetPlayerServerId(player))
+                        else
+                            ESX.ShowNotification("Personne a cotés !")
+                        end
                     end
                 })
                 RageUI.Button("Virer de l'entreprise", (player ~= -1 and GetPlayerName(GetPlayerServerId(player)) or "Aucun joueur proche"), {RightLabel = (distance <= 3.0 and "→→→" or "")}, (distance <= 3.0 and true or false), {
@@ -386,7 +398,11 @@ function MainPersonal()
                         end
                     end,
                     onSelected = function()
-                        Alma:TriggerServerEvent("Entreprise", "Kick", GetPlayerServerId(player))
+                        if player ~= -1 and distance <= 3.0 then
+                            Alma:TriggerServerEvent("Entreprise", "Kick", GetPlayerServerId(player))
+                        else
+                            ESX.ShowNotification("Personne a cotés !")
+                        end
                     end
                 })
             end

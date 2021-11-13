@@ -39,23 +39,23 @@ Citizen.CreateThread(function()
     end)
 end)
 
-AddEventHandler("onResourceStart", function(rn)
-    if rn == GetCurrentResourceName() then
-        MySQL.Async.fetchAll("SELECT * FROM alma_entreprise", {}, function(result)
-            for i = 1, #result do
-                ENTREPRISE[result[i].name] = {
-                    name = result[i].name,
-                    money = result[i].money,
-                    dirty = result[i].dirtycash,
-                    coffre = json.encode(result[i].coffre)
-                }
-            end
-            print("\n\n[^1Authentic-Entreprise^7] Récuperation des donnés réussi !\n\n")
-        end)
-    else
-        return
-    end
-end)
+-- AddEventHandler("onResourceStart", function(rn)
+--     if rn == GetCurrentResourceName() then
+--         MySQL.Async.fetchAll("SELECT * FROM alma_entreprise", {}, function(result)
+--             for i = 1, #result do
+--                 ENTREPRISE[result[i].name] = {
+--                     name = result[i].name,
+--                     money = result[i].money,
+--                     dirty = result[i].dirtycash,
+--                     coffre = json.encode(result[i].coffre)
+--                 }
+--             end
+--             print("\n\n[^1Authentic-Entreprise^7] Récuperation des donnés réussi !\n\n")
+--         end)
+--     else
+--         return
+--     end
+-- end)
 
 ESX.RegisterServerCallback("Inventory:getEntrepriseMenu", function(source, callback)
     local source = source
