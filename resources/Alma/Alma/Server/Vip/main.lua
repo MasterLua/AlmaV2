@@ -333,20 +333,35 @@ RegisterCommand('addVip', function(source, args)
                 if result[1] then
                     print("Request to "..result[1].license.." for recompense vip !")
                     playerLicense = result[1].license
-                    MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier',{
+                    MySQL.Async.fetchAll('SELECT * FROM `alma_character` WHERE identifier = @identifier',{
                         ['@identifier'] = playerLicense
                     }, function(result)
-                        local formattedAccounts = json.decode(result[1].accounts) or {}
-                        for k,v in pairs(formattedAccounts) do
-                            if v.name == "bank" then
-                                v.money = v.money+money
+                        if result > 1 then
+                            for k,v in pairs(result) do
+                                local formattedAccounts = json.decode(v.accounts) or {}
+                                for z,u in pairs(formattedAccounts) do
+                                    if u.name == "bank" then
+                                        u.money = u.money+money
+                                    end
+                                end
+                                MySQL.Async.execute('UPDATE `alma_character` SET `accounts` = @accounts WHERE `id` = '.. v.id ..'',
+                                {
+                                    ["@accounts"] = json.encode(formattedAccounts),
+                                })
                             end
+                        else
+                            local formattedAccounts = json.decode(result[1].accounts) or {}
+                            for k,v in pairs(formattedAccounts) do
+                                if v.name == "bank" then
+                                    v.money = v.money+money
+                                end
+                            end
+                            MySQL.Async.execute('UPDATE `alma_character` SET `accounts` = @accounts WHERE `identifier` = @identifier',
+                            {
+                                ['@identifier'] = playerLicense,
+                                ["@accounts"] = json.encode(formattedAccounts)
+                            })    
                         end
-                        MySQL.Async.execute('UPDATE `users` SET `accounts` = @accounts WHERE `identifier` = @identifier',
-                        {
-                            ['@identifier'] = playerLicense,
-                            ["@accounts"] = json.encode(formattedAccounts)
-                        })
                     end)
                 end
             end)
