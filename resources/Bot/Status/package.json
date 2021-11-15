@@ -1,0 +1,22 @@
+{
+  "name": "devbot",
+  "version": "1.0.0",
+  "description": "Simple bot",
+  "main": "index.js",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "dayjs": "^1.10.6",
+    "discord-buttons": "^4.0.0",
+    "discord-fivem-api": "^1.0.6",
+    "discord-reply": "^0.1.2",
+    "discord.js": "^12.5.3",
+    "gamedig": "^3.0.7",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "/test"
+  },
+  "author": "Kadir#6400",
+  "license": "ISC"
+}

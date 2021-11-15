@@ -171,12 +171,3 @@ end)
 ESX.RegisterServerCallback("Core:GetSocietyInfo", function(source, cb, society)
     cb(SocietyCache[society])
 end)
-
-local first = {};
-
-AddEventHandler("esx:playerLoaded", function(source, xPlayer)
-    first[source] = first[source] + 1
-    if first[source] == 2 then
-        TriggerClientEvent("Core:Response", source, SocietyCache)
-    end
-end)
