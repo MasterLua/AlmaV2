@@ -2,7 +2,7 @@ local ENTREPRISE = {};
 
 Citizen.CreateThread(function()
     while true do
-        MySQL.Async.fetchAll("SELECT * FROM alma_entreprise", {   
+        MySQL.Async.fetchAll("SELECT * FROM `alma_entreprise`", {   
         }, function(result)
             for i = 1, #result do
                 ENTREPRISE[result[i].name] = {
@@ -22,11 +22,11 @@ Citizen.CreateThread(function()
     MySQL.Async.fetchAll("SELECT * FROM jobs", {}, function(result)
         for i = 1, #result do
             local name = result[i].name
-            MySQL.Async.fetchAll("SELECT name FROM alma_entreprise WHERE name = @a", { ["@a"] = name }, function(results)
+            MySQL.Async.fetchAll("SELECT name FROM `alma_entreprise` WHERE name = @a", { ["@a"] = name }, function(results)
                 if results[1] or name == "unemployed" or name == "unemployed2" then
                     return
                 else
-                    MySQL.Async.execute("INSERT INTO alma_entreprise (name, money, dirtycash, coffre) VALUES (@a, @b, @c, @d)", {
+                    MySQL.Async.execute("INSERT INTO `alma_entreprise` (name, money, dirtycash, coffre) VALUES (@a, @b, @c, @d)", {
                         ["@a"] = name,
                         ["@b"] = 0,
                         ["@c"] = 0,
@@ -41,7 +41,7 @@ end)
 
 -- AddEventHandler("onResourceStart", function(rn)
 --     if rn == GetCurrentResourceName() then
---         MySQL.Async.fetchAll("SELECT * FROM alma_entreprise", {}, function(result)
+--         MySQL.Async.fetchAll("SELECT * FROM `alma_entreprise`", {}, function(result)
 --             for i = 1, #result do
 --                 ENTREPRISE[result[i].name] = {
 --                     name = result[i].name,

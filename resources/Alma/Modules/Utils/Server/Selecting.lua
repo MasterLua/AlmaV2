@@ -6,10 +6,12 @@ AddEventHandler('esx:playerLoaded', function(source, xPlayer)
     MySQL.Async.fetchAll("SELECT firstname, lastname, sex, accounts, dateofbirth FROM users WHERE identifier = @selecting", {
         ["@selecting"] = xPlayer.identifier
     }, function(result)
-        if result[1].firstname ~= nil then
-            local account = json.decode(result[1].accounts)
-            table.insert(SelectingPlayer, ({id = result[1].id, firstname = result[1].firstname, lastname = result[1].lastname, sex = result[1].sex, dateofbirth = result[1].dateofbirth, cash = json.encode(account.money), bank = json.encode(account.bank), dirtycash = json.encode(account.black_money)}))
-            Alma:TriggerClientEvent("OnPlayerInitialised", "Init", source, SelectingPlayer)
+        if #result > 0 then
+            for k,v in pairs(result) do
+                local account = json.decode(v.accounts)
+                table.insert(SelectingPlayer, ({id = v.id, firstname = v.firstname, lastname = v.lastname, sex = v.sex, dateofbirth = v.dateofbirth, cash = json.encode(account.money), bank = json.encode(account.bank), dirtycash = json.encode(account.black_money)}))
+                Alma:TriggerClientEvent("OnPlayerInitialised", "Init", source, SelectingPlayer)        
+            end
         else
             Alma:TriggerClientEvent("OnPlayerInitialised", "Init", source, nil)
         end

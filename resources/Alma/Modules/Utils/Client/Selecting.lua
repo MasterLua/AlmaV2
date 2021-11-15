@@ -114,7 +114,8 @@ function Connecting()
 
                     RageUI.Button("Crée un autre personnage.", nil, {}, true, {
                         onSelected = function()
-                            Visual.Subtitle("~y~Information~s~\nBientôt disponible.\nCette fonctionnalité n'est pas encore disponible", 2000)
+                            -- Visual.Subtitle("~y~Information~s~\nBientôt disponible.\nCette fonctionnalité n'est pas encore disponible", 2000)
+                            onSelectedPlayer(nil)
                         end
                     });
                 end
