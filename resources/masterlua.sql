@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `alma_jail` (
   PRIMARY KEY (`jailId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4;
 
--- Listage des données de la table almav2.alma_jail : ~0 rows (environ)
+-- Listage des données de la table almav2.alma_jail : ~1 rows (environ)
 /*!40000 ALTER TABLE `alma_jail` DISABLE KEYS */;
 INSERT INTO `alma_jail` (`jailId`, `identifier`, `time`, `raison`, `update_at`) VALUES
 	(58, 'c9a4f510db6a7f621cd57e41f3cfaf12b035ada2', 7095, 'Troll', '2021-11-11 17:15:36');
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `alma_luckywheel` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
--- Listage des données de la table almav2.alma_luckywheel : ~0 rows (environ)
+-- Listage des données de la table almav2.alma_luckywheel : ~1 rows (environ)
 /*!40000 ALTER TABLE `alma_luckywheel` DISABLE KEYS */;
 INSERT INTO `alma_luckywheel` (`id`, `identifier`, `time`) VALUES
 	(1, 'b3ac67bb27e84fcb6c5ce99861be6487f27333fb', 1637183395);
@@ -379,7 +379,7 @@ CREATE TABLE IF NOT EXISTS `alma_wallet` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2334 DEFAULT CHARSET=utf8mb4;
 
--- Listage des données de la table almav2.alma_wallet : ~10 rows (environ)
+-- Listage des données de la table almav2.alma_wallet : ~12 rows (environ)
 /*!40000 ALTER TABLE `alma_wallet` DISABLE KEYS */;
 INSERT INTO `alma_wallet` (`id`, `identifiers`, `transaction`, `price`, `currency`, `points`, `created_at`, `updated_at`) VALUES
 	(2322, '1462783', 'Capsule de bierre zebi', '100', 'EUR', 20000, '2021-10-25 18:08:19', '2021-10-25 18:08:19');
@@ -730,7 +730,7 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Listage des données de la table almav2.job_grades : ~12 rows (environ)
+-- Listage des données de la table almav2.job_grades : ~13 rows (environ)
 /*!40000 ALTER TABLE `job_grades` DISABLE KEYS */;
 INSERT INTO `job_grades` (`id`, `job_name`, `grade`, `name`, `label`, `salary`, `skin_male`, `skin_female`) VALUES
 	(1, 'unemployed', 0, 'unemployed', 'Chômage', 200, '{}', '{}');
