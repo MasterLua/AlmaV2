@@ -190,7 +190,7 @@ function openMenuGarage(SpawnPoint, TypeGarage, Heading)
                                             if valid then
                                                 RageUI.CloseAll()
                                                 TriggerServerEvent('garage:setstatevehicle', v.plate, true)
-                                                ESX.ShowNotification('Vous avez payé ~g~500$~s~ la fourrière de '..v.label or "Votre Voiture")
+                                                ESX.ShowNotification('Vous avez payé ~g~500$~s~ la fourrière de Votre Voiture')
                                                 RageUI.CloseAll()
                                                 Wait(150)
                                                 openMenuGarage(SpawnPoint, TypeGarage, Heading)
@@ -985,7 +985,7 @@ function openSelectedVehicle(vehicle, SpawnPoint, entreprise, TypeGarage, gang, 
                     end
                     SpawnVehicle(vehicle.vehicle, vehicle.plate, SpawnPoint, Heading)
                     RageUI.CloseAll()
-                    ESX.ShowNotification('Vous avez sorti ~g~'..vehicle.label.."~s~ du garage de "..zoneLabel)
+                    ESX.ShowNotification('Vous avez sorti ~g~'..GetLabelText(GetDisplayNameFromVehicleModel(vehicle.vehicle.model)) == nil and "Votre voiture" or GetLabelText(GetDisplayNameFromVehicleModel(vehicle.vehicle.model)).."~s~ du garage de "..zoneLabel)
                 end
             })
             if not vehicle.boutique then
