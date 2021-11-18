@@ -72,64 +72,74 @@ function AssoMenu()
                     })
                     
                     if ConfigJob[PlayerData.job.name].service then
-                        for l,ze in pairs(PermissionJob[PlayerData.job.name]) do
-                                RageUI.Button("Menotter", nil, {}, true, {
-                                    onSelected = function()
-                                        ze.handcuff = not ze.handcuff
-                                        local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
-                                        if closestPlayer ~= -1 and closestDistance <= 3.0 then
-                                            Alma:TriggerServerEvent("Jobs", "Handcuff", PlayerData.job.name, GetPlayerServerId(closestPlayer))
-                                        else
-                                            ESX.ShowNotification("Aucun joueur à proximité")
-                                        end
+                        if PermissionJob[PlayerData.job.name].handcuff ~= nil then
+                            RageUI.Button("Menotter", nil, {}, true, {
+                                onSelected = function()
+                                    local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+                                    if closestPlayer ~= -1 and closestDistance <= 3.0 then
+                                        Alma:TriggerServerEvent("Jobs", "Handcuff", PlayerData.job.name, GetPlayerServerId(closestPlayer))
+                                    else
+                                        ESX.ShowNotification("Aucun joueur à proximité")
                                     end
-                                })
-                                RageUI.Button("Facturer", nil, {}, true, {
-                                    onSelected = function()
-                                        local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
-                                        if closestPlayer ~= -1 and closestDistance <= 3.0 then
-                                            local input = Helper:KeyboardInput("Combiens ?", "", 5, true)
-                                            if input ~= nil then
-                                                Alma.toServer("Billing:AddBilling", GetPlayerServerId(closestPlayer), tonumber(input), PlayerData.job.name)
-                                            end
-                                        else
-                                            ESX.ShowNotification("Aucun joueur à proximité")
-                                        end
+                                end
+                            })
+                        end
+                        if PermissionJob[PlayerData.job.name].billing ~= nil then
+                            RageUI.Button("Facturer", nil, {}, true, {
+                                onSelected = function()
+                                    local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+                                    if closestPlayer ~= -1 and closestDistance <= 3.0 then
+                                        Alma:TriggerServerEvent("Jobs", "Billing", PlayerData.job.name, GetPlayerServerId(closestPlayer))
+                                    else
+                                        ESX.ShowNotification("Aucun joueur à proximité")
                                     end
-                                })
-                            -- if ze.porter ~= nil then
-                            --     RageUI.Button(ze.porter == true and "Escorter" or "Dé-escorter", nil, {}, true, {
-                            --         onSelected = function()
-                            --             ze.porter = not ze.porter
-                            --             local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
-                            --             if closestPlayer ~= -1 and closestDistance <= 3.0 then
-                            --                 Alma:TriggerServerEvent("Jobs", "Porter", ConfigJob[PlayerData.job.name].job, GetPlayerServerId(closestPlayer))
-                            --             else
-                            --                 ESX.ShowNotification("Aucun joueur à proximité")
-                            --             end
-                            --         end
-                            --     })
-                            -- end
-                                RageUI.Button("Fouiller", nil, {}, true, {
-                                    onSelected = function()
-                                        local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
-                                        if closestPlayer ~= -1 and closestDistance <= 3.0 then
-                                            Alma:TriggerServerEvent("Jobs", "Fouiller", PlayerData.job.name, GetPlayerServerId(closestPlayer))
-                                        else
-                                            ESX.ShowNotification("Aucun joueur à proximité")
-                                        end
-                                    end
-                                })
-                                RageUI.Button("Mettre en fourière", nil, {}, true, {
-                                    onSelected = function()
-                                        local vehicle = GetClosestVehicle(GetEntityCoords(PlayerPedId()), 5.0, 0, 70)
-                                        if vehicle ~= -1 then
-                                            Alma:TriggerServerEvent("Jobs", "Pound", PlayerData.job.name, vehicle)
-                                        else
-                                            ESX.ShowNotification("Aucun véhicule à proximité")
-                                        end
-                                    end
-                                })
+                                end
+                            })
+                        end
+                    -- if ze.porter ~= nil then
+                    --     RageUI.Button(ze.porter == true and "Escorter" or "Dé-escorter", nil, {}, true, {
+                    --         onSelected = function()
+                    --             ze.porter = not ze.porter
+                    --             local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+                    --             if closestPlayer ~= -1 and closestDistance <= 3.0 then
+                    --                 Alma:TriggerServerEvent("Jobs", "Porter", ConfigJob[PlayerData.job.name].job, GetPlayerServerId(closestPlayer))
+                    --             else
+                    --                 ESX.ShowNotification("Aucun joueur à proximité")
+                    --             end
+                    --         end
+                    --     })
+                    -- end
+                    if PermissionJob[PlayerData.job.name].annonce ~= nil then
+                        RageUI.Button("Faire une annonce", nil, {}, true, {
+                            onSelected = function()
+                                local input = KeyboardInput("Announce", "", 100, false)
+                                ExecuteCommand("askannonce "..input)
+                            end
+                        })
+                    end
+                    if PermissionJob[PlayerData.job.name].fouiller ~= nil then
+                        RageUI.Button("Fouiller", nil, {}, true, {
+                            onSelected = function()
+                                local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+                                if closestPlayer ~= -1 and closestDistance <= 3.0 then
+                                    Alma:TriggerServerEvent("Jobs", "Fouiller", PlayerData.job.name, GetPlayerServerId(closestPlayer))
+                                else
+                                    ESX.ShowNotification("Aucun joueur à proximité")
+                                end
+                            end
+                        })
+                    end
+                    if PermissionJob[PlayerData.job.name].pound ~= nil then
+                        RageUI.Button("Mettre en fourière", nil, {}, true, {
+                            onSelected = function()
+                                local vehicle = GetClosestVehicle(GetEntityCoords(PlayerPedId()), 5.0, 0, 70)
+                                if vehicle ~= -1 then
+                                    Alma:TriggerServerEvent("Jobs", "Pound", PlayerData.job.name, vehicle)
+                                else
+                                    ESX.ShowNotification("Aucun véhicule à proximité")
+                                end
+                            end
+                        })
                         end
                     end
                 end

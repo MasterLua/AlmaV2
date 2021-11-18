@@ -40,8 +40,8 @@ function GetRandomString()
 end
 
 Citizen.CreateThread(function()
-    local random = math.random(0, #LuckyWheelTable["vehicle"])
-    LuckyWheelTable["currentvehicle"] = LuckyWheelTable["vehicle"][random]
+    Wait(100)
+    LuckyWheelTable["currentvehicle"] = LuckyWheelTable["vehicle"][1]
     Wait(100)
     print("[^1Authentic-LuckyWheel^7] Véhicule du jour : ^1"..LuckyWheelTable["currentvehicle"].."^7 !")
 end)
@@ -104,7 +104,7 @@ Alma:AddEventHandler("Luckywheel", "PayTicket", function()
     local xPlayer = ESX.GetPlayerFromId(source)
     local price = 75000
 
-    if xPlayer.getAccount('bank').money > price then
+    if xPlayer.getAccount('bank').money >= price then
         Alma:TriggerClientEvent("Luckywheel", "man_roll", source, false)
         Alma:TriggerClientEvent("Luckywheel", "man_day", source, true)
         ResetTimer(xPlayer, false)
@@ -159,7 +159,7 @@ Alma:AddEventHandler("Luckywheel", "RequestPrice", function()
                     ResetTimer(xPlayer, true)
                 elseif LuckyWheelTable["gain"][random] == "vehicle" then
                     local veh = {model = GetHashKey(LuckyWheelTable["currentvehicle"]), plate = GetRandomString()}
-                    MySQL.Async.execute("INSERT INTO owned_vehicles (owner, plate, vehicle, type, state, label) VALUES('"..xPlayer.identifier"', '"..veh.plate.."', '"..json.encode(veh).."', 'car', 1, 'Véhicule de la Roue')", {})
+                    MySQL.Async.execute("INSERT INTO owned_vehicles (owner, plate, vehicle, type, state, label) VALUES('"..xPlayer.identifier.."', '"..veh.plate.."', '"..json.encode(veh).."', 'car', 1, 'Véhicule de la Roue')", {})
                     Helper:showAdvancedNotification(source, "Roue de la fortune", "~b~Récompense", "~g~Félicitation~s~, vous avez gagné ~g~la voiture du jour~s~, disponible dans votre garage !", "CHAR_CASINO", 1)
                     Alma:TriggerClientEvent("Luckywheel", "man_roll", source, false)
                     Alma:TriggerClientEvent("Luckywheel", "man_day", source, false)

@@ -10,23 +10,16 @@ local time_format = nil;
 local can_roll = false;
 
 local additionalProps = {
-    {model = "prop_worklight_03b", coords = vector3(226.939453125,-888.69189453125,29.692026138306), angle = 210.42},
-    {model = "prop_worklight_03b", coords = vector3(222.48136901855,-886.74139404297,29.692003250122), angle = 118.00},
     {model = "prop_table_03", coords = vector3(226.24299621582, -885.10906982422, 29.492115020752), angle = 341.0},
-    {model = "prop_beach_parasol_04", coords = vector3(222.71022033691,-882.89910888672,29.492084503174), angle = 70.0},
     {model = "prop_direct_chair_01", coords = vector3(225.69311523438,-886.35662841797,29.492118835449), angle = 140.0},
     {model = "prop_streetlight_12b", coords = vector3(215.29782104492, -870.73107910156, 29.40), angle = 160.5},
-    {model = "prop_air_lights_02a", coords = vector3(232.35372924805, -878.88604736328, 29.40), angle = 50.0},
-    {model = "prop_air_lights_02a", coords = vector3(236.97882080078, -880.50720214844, 29.40), angle = 50.0},
-    {model = "prop_speaker_07", coords = vector3(228.02279663086,-886.05871582031,30.841068267822), angle = 170.0},
     {model = "prop_beer_bottle", coords = vector3(225.82942199707,-885.12133789062,30.307487487793), angle = 60.0},
-    {model = "prop_speaker_07", coords = vector3(224.23669433594,-884.77825927734,29.492074966431), angle = 307.0},
-    {model = "stt_prop_speakerstack_01a", coords = vector3(227.8874206543,-886.00811767578,29.492086410522), angle = 170.0}
 }
 
 local function startSpin()
     Citizen.CreateThread(function()
         local pos = 7
+        Visual.Subtitle("~c~~h~Vous tourner la roue de la fortune...", 1750)
         SetEntityRotation(roue, 0, 0, 160.0, false, true);
 
         local deg = 0.0;
@@ -56,22 +49,18 @@ local function startSpin()
 end
 
 Alma:AddEventHandler("Luckywheel", "man_veh", function(value)
-    print("veh_current:"..tostring(value))
     veh_current = value;
 end)
 
 Alma:AddEventHandler("Luckywheel", "man_roll", function(value)
-    print("can_roll:"..tostring(value))
     can_roll = value
 end)
 
 Alma:AddEventHandler("Luckywheel", "man_day", function(value)
-    print("rolling_day:"..tostring(value))
     rolling_day = value
 end)
 
 Alma:AddEventHandler("Luckywheel", "man_time", function(value)
-    print("time:"..tostring(value))
     time_format = value
 end)
 
@@ -175,7 +164,7 @@ Citizen.CreateThread(function()
 	SetPedConfigFlag(entity.ped, 208, true)
 	SetPedCanRagdollFromPlayerImpact(entity.ped, false)
     Markers:Register({
-        vector3 = vector3(220.3, -871.3, 30.5),
+        vector3 = vector3(227.5, -883.4, 30.5),
         distance = 10.0,
         size = 5.0,
         hidden = true,
@@ -191,7 +180,9 @@ Citizen.CreateThread(function()
 end)
 
 function LuckyArea()
-    local luckyWheelMenu = RageUI.CreateMenu("Roue", "Lucky Wheel", 1, 1200, "casinoui_lucky_wheel", "casinoui_lucky_wheel");
+    local luckyWheelMenu = RageUI.CreateMenu("Roue", "Roue de la chance", 1, 1200, "casinoui_lucky_wheel", "casinoui_lucky_wheel");
+    luckyWheelMenu.TitleFont = 2;
+    FreezeEntityPosition(PlayerPedId(), true)
 
     RageUI.Visible(luckyWheelMenu, not RageUI.Visible(luckyWheelMenu))
 
@@ -215,6 +206,7 @@ function LuckyArea()
             RageUI.Button("Quesque c'est ?", "~h~Roue de la fortune : \n- C'est une roue de vous pouvez tourner tout ~g~les jours gratuitement~s~\n- Vous pouvez remporter des prix (~g~argents~s~, ~r~véhicule~s~, ~o~objects~s~)\n\nIl ne reste plus qu'à vous souhaiter bonne chance !", {}, true, {})
         end)
         if not RageUI.Visible(luckyWheelMenu) then
+            FreezeEntityPosition(PlayerPedId(), false)
             luckyWheelMenu = RMenu:DeleteType("luckyWheelMenu", true)
         end
     end
@@ -223,7 +215,7 @@ end
 function onLuckywheelTourneArea()
     if not RageUI.Visible(luckyWheelMenu) then
         if not rolling_day and can_roll then
-            Visual.FloatingHelpText("Appuyer sur ~INPUT_CONTEXT~ pour tourner la roue de la fortune !", false, false)
+            Visual.FloatingHelpText("~h~Appuyer sur ~INPUT_CONTEXT~ pour tourner la roue de la fortune.", false, false)
             if IsControlJustPressed(0, 51) then
                 local playerPed = PlayerPedId()
                 local _lib = 'anim_casino_a@amb@casino@games@lucky7wheel@female'
@@ -247,14 +239,14 @@ function onLuckywheelTourneArea()
                 end)
             end
         else
-            Visual.FloatingHelpText("Vous n'avez pas encore récuperer votre ticket, on vous avez déjà tourner la roue !", false, false)
+            Visual.FloatingHelpText("~h~~r~Désolé~s~, mais il semblerait que vous ne puissez pas encore tourner la roue !", false, false)
         end
     end
 end
 
 function onLuckywheelArea()
     if not RageUI.Visible(luckyWheelMenu) then
-        Visual.FloatingHelpText("Appuyer sur ~INPUT_CONTEXT~ pour parler avec ~c~Authentic~s~ !", false, false)
+        Visual.FloatingHelpText("~h~Appuyer sur ~INPUT_CONTEXT~ pour parler avec le personnage.", false, false)
         if IsControlJustPressed(0, 51) then
             LuckyArea()
         end

@@ -68,3 +68,5 @@ server_scripts {
     "addons/**/server/objects/*.lua",
     "addons/tasks/server/tasks/*.lua"
 }
+
+export 'XNL_GetCurrentPlayerLevel'

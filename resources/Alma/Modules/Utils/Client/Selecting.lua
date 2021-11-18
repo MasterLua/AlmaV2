@@ -52,13 +52,29 @@ local function onSelectedPlayer(cId)
     DoScreenFadeIn(2000)
     if (CHARACTERS == nil) then
         Alma:TriggerServerEvent("Character", "SelectedCharacter", true)
+        exports.api:startnewLogo(true)
+        TriggerEvent("Alma:HudToogles", true)
     else
+        FreezeEntityPosition(PlayerPedId(), true)
         Alma:TriggerServerEvent("Character", "SelectedCharacter", false)
         SetEntityCoordsNoOffset(PlayerPedId(), PlayerData.coords.x, PlayerData.coords.y, PlayerData.coords.z)
-        FreezeEntityPosition(PlayerPedId(), false)
         Visual.Prompt("Chargement de votre position...", true)
         Citizen.Wait(2000)
         BusyspinnerOff();
+        exports.api:startWelcomeLogos(1, true, 500, 500)
+        SetTimeout(2000, function()
+            local level = exports["Ambiance"]:XNL_GetCurrentPlayerLevel()
+            print(level)
+            if level < 5 then
+                ESX.ShowAdvancedNotification("Information", "~y~Système de niveau", "Vous êtes niveau actuellement au niveau ~y~"..level.."~s~, vous ne pouvez pas donc pas encore taper quelqu'un !", "CHAR_MICHAEL", 2)
+            else
+                ESX.ShowAdvancedNotification("Information", "~y~Système de niveau", "~g~Félicitation~s~, Vous êtes niveau actuellement au niveau ~y~"..level.."~s~, vous pouvez taper quelqu'un car vous avez dépasser ou vous êtes niveau 5 !", "CHAR_MICHAEL", 2)
+            end
+            FreezeEntityPosition(PlayerPedId(), false)
+            exports.api:removeAllWelcomeLogos()
+            exports.api:startnewLogo(true)
+            TriggerEvent("Alma:HudToogles", true)
+        end)
     end
     while not IsScreenFadedIn() do
         Citizen.Wait(0)

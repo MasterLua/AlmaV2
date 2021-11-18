@@ -9,7 +9,8 @@ local settings = {
         [1] = 0,
         [2] = 0,
         [3] = 0
-    }
+    },
+    hud = true
 }
 
 
@@ -174,7 +175,8 @@ function MainPersonal()
                 })
             end
                 RageUI.Button("Paramètre(s)", nil, {RightLabel = "→→→"}, true, {
-
+                    onSelected = function()
+                    end
                 }, paramMenu)
         end)
         RageUI.IsVisible(vhMenu, function()
@@ -504,6 +506,18 @@ function MainPersonal()
                     settings.color[3] = GetResourceKvpInt("menuB")
                 end
             }, persoMenu)
+            RageUI.Checkbox("Visibilité de l'HUD", nil, settings.hud, {}, {
+                onChecked = function()
+                    settings.hud = true
+                end,
+                onUnchecked = function()
+                    settings.hud = false
+                end,
+                onSelected = function(Index)
+                    settings.hud = Index;
+                    TriggerEvent("Alma:HudToogles", Index)
+                end
+            })
             RageUI.Button("Rockstar", nil, {}, true, {
 
             }, rockMenu)
