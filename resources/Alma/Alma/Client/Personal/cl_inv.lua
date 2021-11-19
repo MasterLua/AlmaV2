@@ -34,8 +34,8 @@ local FILTER_INVENTORY = {
 local FILTER_INDEX = 2;
 
 local ACCOUNT_LABEL = {
-    ["cash"] = "Argent",
-    ["dirtycash"] = "Argent sale",
+    ["money"] = "Argent",
+    ["black_money"] = "Argent sale",
 }
 
 local ITEM_ACTION = {
@@ -85,7 +85,7 @@ Alma:AddEventHandler("Inventory", "onLoaded", function(Inventory, Accounts, Weap
     sizeObj = ESX.Table.SizeOf(Inventory)    
     sizeWea = ESX.Table.SizeOf(Weapons)
     for i, v in pairs(Accounts) do
-        if (v.name == "cash") or (v.name == "dirtycash") then
+        if (v.name == "money") or (v.name == "black_money") then
             ACCOUNTS[v.name] = ESX.Math.Round(v.money)
         end
     end
@@ -212,6 +212,7 @@ local DISPLAY = {
                                 local target = GetPlayerPed(player)
                                 if IsPedOnFoot(target) then
                                     Helper:OnAskQuantity(function(amount)
+                                        print(amount)
                                         Alma:TriggerServerEvent("Inventory", "GiveInventoryItem", GetPlayerServerId(player), "item_account", name, amount)
                                     end)
                                 else

@@ -31,11 +31,11 @@ AddEventHandler('Init:Inventory', function(source, xPlayer)
     local Inventory = {}
 	local Weapons = {}
 
-    table.insert(Account, {name = "cash", money = xPlayer.getAccount('money').money})
-    table.insert(Account, {name = "dirtycash", money = xPlayer.getAccount('black_money').money})
+    table.insert(Account, {name = "money", money = xPlayer.getAccount('money').money})
+    table.insert(Account, {name = "black_money", money = xPlayer.getAccount('black_money').money})
     for k,v in pairs(xPlayer.getInventory()) do
         if v.count > 0 then
-            table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight})
+            table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight, label = v.label})
         end
     end
 	for k,v in pairs(xPlayer.getLoadout()) do
@@ -55,11 +55,11 @@ function RefreshPlayer(id)
     	local Inventory = {}
 		local Weapons = {}
 
-    	table.insert(Account, {name = "cash", money = xPlayer.getAccount('money').money})
-    	table.insert(Account, {name = "dirtycash", money = xPlayer.getAccount('black_money').money})
+    	table.insert(Account, {name = "money", money = xPlayer.getAccount('money').money})
+    	table.insert(Account, {name = "black_money", money = xPlayer.getAccount('black_money').money})
     	for k,v in pairs(xPlayer.getInventory()) do
     	    if v.count > 0 then
-    	        table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight})
+    	        table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight, label = v.label})
     	    end
     	end
 		for k,v in pairs(xPlayer.getLoadout()) do
@@ -79,11 +79,11 @@ Alma:AddEventHandler("Inventory", "Request", function()
     local Inventory = {}
 	local Weapons = {}
 
-    table.insert(Account, {name = "cash", money = xPlayer.getAccount('money').money})
-    table.insert(Account, {name = "dirtycash", money = xPlayer.getAccount('black_money').money})
+    table.insert(Account, {name = "money", money = xPlayer.getAccount('money').money})
+    table.insert(Account, {name = "black_money", money = xPlayer.getAccount('black_money').money})
     for k,v in pairs(xPlayer.getInventory()) do
         if v.count > 0 then
-            table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight})
+            table.insert(Inventory, {name = v.name, count = v.count, weight = v.weight, label = v.label})
         end
     end
 	for k,v in pairs(xPlayer.getLoadout()) do
@@ -100,6 +100,8 @@ Alma:AddEventHandler('Inventory', 'GiveInventoryItem', function(target, type, it
 	local _source = source
 	local sourceXPlayer = ESX.GetPlayerFromId(_source)
 	local targetXPlayer = ESX.GetPlayerFromId(target)
+	local itemCount = tonumber(itemCount)
+	print(target, type, itemName, itemCount)
 
 	if type == 'item_standard' then
 		local sourceItem = sourceXPlayer.getInventoryItem(itemName)
@@ -109,8 +111,8 @@ Alma:AddEventHandler('Inventory', 'GiveInventoryItem', function(target, type, it
 				sourceXPlayer.removeInventoryItem(itemName, itemCount)
 				targetXPlayer.addInventoryItem(itemName, itemCount)
 
-				sourceXPlayer.showAdvancedNotification("Alma", "~g~Inventaire", "Tu as donné ".. itemCount .."".. ESX.Items[itemName].label.." à "..targetXPlayer.name, 'CHAR_CALIFORNIA', 7)
-				targetXPlayer.showAdvancedNotification("Alma", "~g~Inventaire", "Tu as reçus ".. itemCount.. ""..ESX.Items[itemName].label.." de "..sourceXPlayer.name, 'CHAR_CALIFORNIA', 7)
+				Helper:showAdvancedNotification(sourceXPlayer.source, "Alma", "~g~Inventaire", "Tu as donné ".. itemCount .." ".. ESX.Items[itemName].label.." à "..targetXPlayer.name, 'CHAR_CALIFORNIA', 7)
+				Helper:showAdvancedNotification(targetXPlayer.source, "Alma", "~g~Inventaire", "Tu as reçus ".. itemCount.. " "..ESX.Items[itemName].label.." de "..sourceXPlayer.name, 'CHAR_CALIFORNIA', 7)
 				RefreshPlayer(_source)
 				RefreshPlayer(targetXPlayer.source)
 			else
@@ -120,8 +122,8 @@ Alma:AddEventHandler('Inventory', 'GiveInventoryItem', function(target, type, it
 			sourceXPlayer.showAdvancedNotification("Alma", "~g~Inventaire", 'Quantité invalide, ou non supérieur a votre inventaire', 'CHAR_CALIFORNIA', 7)
 		end
 	elseif type == 'item_account' then
+		print(sourceXPlayer.getAccount(itemName).money, itemCount)
 		if itemCount > 0 and sourceXPlayer.getAccount(itemName).money >= itemCount then
-			local accountLabel = ESX.GetAccountLabel(itemName)
 
 			sourceXPlayer.removeAccountMoney(itemName, itemCount)
 			targetXPlayer.addAccountMoney(itemName, itemCount)
@@ -137,7 +139,6 @@ Alma:AddEventHandler('Inventory', 'GiveInventoryItem', function(target, type, it
 		itemName = string.upper(itemName)
 
 		if sourceXPlayer.hasWeapon(itemName) then
-			local weaponLabel = ESX.GetWeaponLabel(itemName)
 
 			if not targetXPlayer.hasWeapon(itemName) then
 				local weaponNum, weapon = sourceXPlayer.getWeapon(itemName)
@@ -147,8 +148,8 @@ Alma:AddEventHandler('Inventory', 'GiveInventoryItem', function(target, type, it
 				targetXPlayer.addWeapon(itemName, itemCount)
 
 				if itemCount > 0 then
-					sourceXPlayer.showAdvancedNotification("Alma", "~g~Armes", "Tu as donné ".. weaponLabel.." avec "..itemCount.." munitions à "..targetXPlayer.name, 'CHAR_CALIFORNIA', 7)
-					targetXPlayer.showAdvancedNotification("Alma", "~g~Armes", "Tu as reçus ".. weaponLabel.."avec " ..itemCount.." munition à ".. sourceXPlayer.name, 'CHAR_CALIFORNIA', 7)
+					Helper:showAdvancedNotification(sourceXPlayer.source, "Alma", "~g~Armes", "Tu as donné un "..ESX.GetWeaponLabel(itemName) .." avec "..itemCount.." munitions à "..targetXPlayer.name, 'CHAR_CALIFORNIA', 7)
+					Helper:showAdvancedNotification(targetXPlayer.source, "Alma", "~g~Armes", "Tu as reçus un ".. ESX.GetWeaponLabel(itemName) .."avec " ..itemCount.." munition à ".. sourceXPlayer.name, 'CHAR_CALIFORNIA', 7)
 					RefreshPlayer(_source)
 					RefreshPlayer(targetXPlayer.source)
 				else
@@ -190,35 +191,40 @@ Alma:AddEventHandler('Inventory', 'DropInventoryItem', function(type, itemName, 
 
 	if type == 'item_standard' then
 		if itemCount == nil or itemCount < 1 then
-			xPlayer.showAdvancedNotification("Alma", "~y~Inventaire", _U('imp_invalid_quantity'), 'CHAR_CALIFORNIA', 7)
+			Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Inventaire", _U('imp_invalid_quantity'), 'CHAR_CALIFORNIA', 7)
 		else
 			local xItem = xPlayer.getInventoryItem(itemName)
 
 			if (itemCount > xItem.count or xItem.count < 1) then
-				xPlayer.showAdvancedNotification("Alma", "~y~Inventaire", _U('imp_invalid_quantity'), 'CHAR_CALIFORNIA', 7)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Inventaire", _U('imp_invalid_quantity'), 'CHAR_CALIFORNIA', 7)
 			else
 				xPlayer.removeInventoryItem(itemName, itemCount)
 
 				local pickupLabel = ('~y~%s~s~ [~b~%s~s~]'):format(ESX.Items[itemName].label, itemCount)
 				ESX.CreatePickup('item_standard', itemName, itemCount, pickupLabel, _source)
-				xPlayer.showAdvancedNotification("Alma", "~y~Inventaire", _U('threw_standard', itemCount, ESX.Items[itemName].label), 'CHAR_CALIFORNIA', 7)
+				RefreshPlayer(_source)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Inventaire", _U('threw_standard', itemCount, ESX.Items[itemName].label), 'CHAR_CALIFORNIA', 7)
 			end
 		end
 	elseif type == 'item_account' then
 		if itemCount == nil or itemCount < 1 then
-			xPlayer.showAdvancedNotification("Alma", "~y~Portefeuille", _U('imp_invalid_amount'), 'CHAR_CALIFORNIA', 9)
+			Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Portefeuille", _U('imp_invalid_amount'), 'CHAR_CALIFORNIA', 9)
 		else
 			local account = xPlayer.getAccount(itemName)
-			local accountLabel = ESX.GetAccountLabel(itemName)
+			local accountLabel = {
+				["money"] = "Liquide",
+				["dirty_money"] = "Argent Sale"
+			}
 
 			if (itemCount > account.money or account.money < 1) then
-				xPlayer.showAdvancedNotification("Alma", "~y~Portefeuille", _U('imp_invalid_amount'), 'CHAR_CALIFORNIA', 9)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Portefeuille", _U('imp_invalid_amount'), 'CHAR_CALIFORNIA', 9)
 			else
 				xPlayer.removeAccountMoney(itemName, itemCount)
 
-				local pickupLabel = ('~y~%s~s~ [~g~%s~s~]'):format(accountLabel, _U('locale_currency', ESX.Math.GroupDigits(itemCount)))
+				local pickupLabel = ('~y~%s~s~ [~g~%s~s~]'):format(accountLabel[itemName], _U('locale_currency', ESX.Math.GroupDigits(itemCount)))
 				ESX.CreatePickup('item_account', itemName, itemCount, pickupLabel, _source)
-				xPlayer.showAdvancedNotification("Alma", "~y~Portefeuille", _U('threw_account', ESX.Math.GroupDigits(itemCount), string.lower(accountLabel)), 'CHAR_CALIFORNIA', 9)
+				RefreshPlayer(_source)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Portefeuille", _U('threw_account', ESX.Math.GroupDigits(itemCount), string.lower(accountLabel)), 'CHAR_CALIFORNIA', 9)
 			end
 		end
 	elseif type == 'item_weapon' then
@@ -230,11 +236,12 @@ Alma:AddEventHandler('Inventory', 'DropInventoryItem', function(type, itemName, 
 
 			local pickupLabel = ('~y~%s~s~ [~g~%s~s~]'):format(weapon.label, weapon.ammo)
 			ESX.CreatePickup('item_weapon', itemName, weapon.ammo, pickupLabel, _source, weapon.components)
+			RefreshPlayer(_source)
 
 			if weapon.ammo > 0 then
-				xPlayer.showAdvancedNotification("Alma", "~y~Armes", _U('threw_weapon_ammo', weapon.label, weapon.ammo), 'CHAR_CALIFORNIA', 7)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Armes", _U('threw_weapon_ammo', weapon.label, weapon.ammo), 'CHAR_CALIFORNIA', 7)
 			else
-				xPlayer.showAdvancedNotification("Alma", "~y~Armes", _U('threw_weapon', weapon.label), 'CHAR_CALIFORNIA', 7)
+				Helper:showAdvancedNotification(xPlayer.source, "Alma", "~y~Armes", _U('threw_weapon', weapon.label), 'CHAR_CALIFORNIA', 7)
 			end
 		end
 	end
@@ -247,6 +254,7 @@ Alma:AddEventHandler("Inventory", "UseItem", function(itemName)
 	if xItem then
 		if xItem.count > 0 then
 			ESX.UseItem(xPlayer.source, itemName)
+			RefreshPlayer(_source)
 		else
 			Helper:showAdvancedNotification(xPlayer.source, "Alma", "~g~Inventaire", "Vous avez utiliser x1 de "..itemName, 'CHAR_CALIFORNIA', 7)
 		end

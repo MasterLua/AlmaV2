@@ -13,7 +13,7 @@ exports.fivemStatus = {
     },
     liens: {
         boutique: "https://shop.modernfivem.fr/", 
-        ip: ["127.0.0.1", "30120"], 
+        ip: ["65.21.108.100", "30120"],
         cfx: ["http://176.31.199.121:30120", "176.31.199.121"]
     },
     channels: {
