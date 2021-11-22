@@ -6,6 +6,7 @@
 #### ☣️ Precision : base not terminated / base pas fini.
 #### 😍 I will help nobody !
 #### 🙋 Good luck !
+#### 😡  PS : la prochaine fois tu me paiera **Capsule#0001**
 
 | Actual Version | Developer |
 | ------- | ------------------ |
